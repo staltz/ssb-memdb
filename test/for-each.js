@@ -2,27 +2,23 @@ const test = require('tape')
 const ssbKeys = require('ssb-keys')
 const path = require('path')
 const rimraf = require('rimraf')
-const mkdirp = require('mkdirp')
+const os = require('os')
 const SecretStack = require('secret-stack')
 const caps = require('ssb-caps')
 const p = require('util').promisify
 
-const dir = '/tmp/ssb-memdb-for-each'
-
-rimraf.sync(dir)
-mkdirp.sync(dir)
-
-const keys = ssbKeys.loadOrCreateSync(path.join(dir, 'secret'))
-
-let ssb = SecretStack({ appKey: caps.shs })
-  .use(require('../'))
-  .use(require('ssb-classic'))
-  .call(null, {
-    keys,
-    path: dir,
-  })
+const DIR = path.join(os.tmpdir(), 'ssb-memdb-for-each')
+rimraf.sync(DIR)
 
 test('forEach', async (t) => {
+  const ssb = SecretStack({ appKey: caps.shs })
+    .use(require('../'))
+    .use(require('ssb-classic'))
+    .call(null, {
+      keys: ssbKeys.generate('ed25519', 'alice'),
+      path: DIR,
+    })
+
   await ssb.db.loaded()
 
   for (let i = 0; i < 10; i++) {

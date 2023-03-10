@@ -1,29 +1,26 @@
 const test = require('tape')
 const ssbKeys = require('ssb-keys')
 const path = require('path')
+const os = require('os')
 const rimraf = require('rimraf')
-const mkdirp = require('mkdirp')
 const SecretStack = require('secret-stack')
 const caps = require('ssb-caps')
 const p = require('util').promisify
 
-const dir = '/tmp/ssb-memdb-create'
+const DIR = path.join(os.tmpdir(), 'ssb-memdb-create');
+rimraf.sync(DIR)
 
-rimraf.sync(dir)
-mkdirp.sync(dir)
-
-const keys = ssbKeys.loadOrCreateSync(path.join(dir, 'secret'))
-
-let ssb = SecretStack({ appKey: caps.shs })
-  .use(require('../'))
-  .use(require('ssb-classic'))
-  .use(require('ssb-box'))
-  .call(null, {
-    keys,
-    path: dir,
-  })
-
+let ssb
 test('setup', async (t) => {
+  ssb = SecretStack({ appKey: caps.shs })
+    .use(require('../'))
+    .use(require('ssb-classic'))
+    .use(require('ssb-box'))
+    .call(null, {
+      keys: ssbKeys.generate('ed25519', 'alice'),
+      path: DIR,
+    })
+
   await ssb.db.loaded()
 })
 
@@ -45,7 +42,7 @@ test('create() classic', async (t) => {
 test('create() classic box', async (t) => {
   const msgBoxed = await p(ssb.db.create)({
     feedFormat: 'classic',
-    content: { type: 'post', text: 'I am chewing food', recps: [keys.id] },
+    content: { type: 'post', text: 'I am chewing food', recps: [ssb.id] },
     encryptionFormat: 'box',
   })
   t.equal(typeof msgBoxed.value.content, 'string')
