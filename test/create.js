@@ -42,8 +42,7 @@ test('create() classic', async (t) => {
   t.equal(msg2.value.previous, msg1.key, 'msg2 previous correct')
 })
 
-// TODO:
-test.skip('create() classic box', async (t) => {
+test('create() classic box', async (t) => {
   const msgBoxed = await p(ssb.db.create)({
     feedFormat: 'classic',
     content: { type: 'post', text: 'I am chewing food', recps: [keys.id] },
