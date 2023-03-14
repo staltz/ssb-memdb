@@ -1,6 +1,6 @@
 {
   "name": "ssb-memdb",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "An SSB database optimized for small logs",
   "main": "index.js",
   "files": [
