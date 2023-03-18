@@ -19,7 +19,7 @@
     "url": "git@github.com:staltz/ssb-memdb.git"
   },
   "dependencies": {
-    "async-append-only-log": "^4.3.9",
+    "async-append-only-log": "^4.3.10",
     "obz": "^1.1.0",
     "promisify-4loc": "^1.0.0",
     "push-stream": "^11.2.0"
